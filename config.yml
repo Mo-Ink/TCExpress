@@ -1,0 +1,8 @@
+blacklist_worlds:
+- just_for_demonstration
+
+buffer_length: 5
+
+adjust_length: 10
+
+max_speed: 40
