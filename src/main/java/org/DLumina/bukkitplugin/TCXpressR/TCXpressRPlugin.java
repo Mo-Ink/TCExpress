@@ -1,6 +1,5 @@
 package org.DLumina.bukkitplugin.TCXpressR;
 
-import com.google.common.collect.Iterables;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -20,11 +19,12 @@ import java.util.List;
 import java.util.Set;
 
 public class TCXpressRPlugin extends JavaPlugin implements Listener {
-    private double MAX_SPEED = 2;
-    private int BUFFER_LENGTH = 5;
-    private int ADJUST_LENGTH = 20;
+    private double MAX_SPEED = 2;//max speed per tick
+    private int BUFFER_LENGTH = 5;//the final distance on which cart keep 8m/s
+    private int ADJUST_LENGTH = 10;//the adjust distance on which cart decelerate from max speed to 8m/s
     private final static double NORMAL_SPEED = 0.4;
-
+    
+    private boolean is_extra_boost_enabled = false;//if an extra boost is enabled, to accelerate all carts to max speed
     private final Set<String> blacklistworlds = new HashSet<String>();
 
     @Override
@@ -42,9 +42,10 @@ public class TCXpressRPlugin extends JavaPlugin implements Listener {
             }
         }
         MAX_SPEED = getConfig().getDouble("max_speed");
-        MAX_SPEED = MAX_SPEED/20;
+        MAX_SPEED = MAX_SPEED / 20;
         BUFFER_LENGTH = getConfig().getInt("buffer_length");
         ADJUST_LENGTH = getConfig().getInt("adjust_length");
+        is_extra_boost_enabled = getConfig().getBoolean("is_extra_boost_enabled");
     }
 
     @Override
@@ -98,9 +99,22 @@ public class TCXpressRPlugin extends JavaPlugin implements Listener {
             minecart.setMaxSpeed(NORMAL_SPEED);
             return;
         }
-
+        
+        /*
+        double curSpeed;
+        boolean isX;
+        if(x != 0 && z == 0) {
+        	isX = true;
+        	curSpeed = x;
+        }
+        else {
+        	isX = false;
+        	curSpeed = z;
+        }
+        */
         boolean isX = x != 0 && z == 0;
         boolean n = isX ? x < 0 : z < 0;
+        double curSpeed = isX ? (n?(-x):x) : (n?(-z):z);
         BlockFace direction = isX ? (n ? BlockFace.WEST : BlockFace.EAST) : (n ? BlockFace.NORTH : BlockFace.SOUTH);
 
         int flatLength = 0;
@@ -126,6 +140,28 @@ public class TCXpressRPlugin extends JavaPlugin implements Listener {
         if (s > 1) s = 1;
         double speed = NORMAL_SPEED + (MAX_SPEED - NORMAL_SPEED) * s;
         minecart.setMaxSpeed(speed);
+        
+        if(is_extra_boost_enabled == false)
+        	return;
+        
+        if ((curSpeed <= 8) || (curSpeed >= MAX_SPEED))
+        	return;
+        
+        double extra_boost = curSpeed * (MAX_SPEED - curSpeed + 10) / MAX_SPEED / 20;//add extra acceleration
+        if (extra_boost > 1)
+        	extra_boost = 1;
+        
+        curSpeed += extra_boost;
+        if (curSpeed > MAX_SPEED)
+        	curSpeed = MAX_SPEED;
+        if (isX == true) {
+        	vector.setX(n ? (-curSpeed) : curSpeed);
+        }
+        else {
+        	vector.setZ(n ? (-curSpeed) : curSpeed);
+        }
+        minecart.setVelocity(vector);
+        
     }
 
     private static Block nextRail(BlockFace direction, Block block) {
