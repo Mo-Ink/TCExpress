@@ -8,8 +8,8 @@
         <outputRelativeToContentRoot value="true" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="TCExpressR" target="1.5" />
+    <bytecodeTargetLevel target="16">
+      <module name="TCExpressR" target="16" />
     </bytecodeTargetLevel>
   </component>
 </project>
