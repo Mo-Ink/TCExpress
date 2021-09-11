@@ -14,7 +14,7 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-public class TCExpressR extends JavaPlugin implements Listener {
+public class TCExpressRPlugin extends JavaPlugin implements Listener {
     private final static double NORMAL_SPEED = 0.4;
     private double MAX_SPEED = 2;//Max speed per tick
     private int BUFFER_LENGTH = 5;//The final distance on which cart keep 8m/s

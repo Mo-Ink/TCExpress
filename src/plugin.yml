@@ -1,6 +1,6 @@
 name: TCExpressReloaded
 api-version: 1.17
-main: org.Mo_Ink.TCExpressR
+main: org.Mo_Ink.TCExpressR.TCExpressRPlugin
 version: 0.2.3
 author: Mo_Ink
 description: A plugin that allow renamed minecarts run faster on straight rails. Original ver：TCExpress by i@thetd.me
